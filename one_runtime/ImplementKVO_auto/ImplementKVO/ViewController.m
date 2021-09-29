@@ -13,6 +13,8 @@
 
 @property (nonatomic, copy) NSString *text;
 
+
+
 @end
 
 @implementation Message
@@ -65,7 +67,7 @@
 
 - (void)dealloc{
     NSLog(@"666");
-    [self.message PG_removeObserver: self forKey: NSStringFromSelector(@selector(text))];
+   
 }
 
 @end

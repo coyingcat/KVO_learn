@@ -39,36 +39,6 @@ NSString *const kPGKVOAssociatedObservers = @"PGKVOAssociatedObservers";
 @end
 
 
-#pragma mark - Debug Help Methods
-static NSArray *ClassMethodNames(Class c)
-{
-    NSMutableArray *array = [NSMutableArray array];
-    
-    unsigned int methodCount = 0;
-    Method *methodList = class_copyMethodList(c, &methodCount);
-    unsigned int i;
-    for(i = 0; i < methodCount; i++) {
-        [array addObject: NSStringFromSelector(method_getName(methodList[i]))];
-    }
-    free(methodList);
-    
-    return array;
-}
-
-
-static void PrintDescription(NSString *name, id obj)
-{
-    NSString *str = [NSString stringWithFormat:
-                     @"%@: %@\n\tNSObject class %s\n\tRuntime class %s\n\timplements methods <%@>\n\n",
-                     name,
-                     obj,
-                     class_getName([obj class]),
-                     class_getName(object_getClass(obj)),
-                     [ClassMethodNames(object_getClass(obj)) componentsJoinedByString:@", "]];
-    printf("%s\n", [str UTF8String]);
-}
-
-
 #pragma mark - Helpers
 static NSString * getterForSetter(NSString *setter)
 {
@@ -149,6 +119,14 @@ static Class kvo_class(id self, SEL _cmd)
 }
 
 
+void yourDealloc(id self, SEL _cmd){
+    NSLog(@"%s  :  here", __func__);
+    NSMutableArray* observers = objc_getAssociatedObject(self, (__bridge const void *)(kPGKVOAssociatedObservers));
+    [observers removeAllObjects];
+}
+
+
+
 #pragma mark - KVO Category
 @implementation NSObject (KVO)
 
@@ -192,21 +170,6 @@ static Class kvo_class(id self, SEL _cmd)
 }
 
 
-- (void)PG_removeObserver:(NSObject *)observer forKey:(NSString *)key
-{
-    NSMutableArray* observers = objc_getAssociatedObject(self, (__bridge const void *)(kPGKVOAssociatedObservers));
-    
-    PGObservationInfo *infoToRemove;
-    for (PGObservationInfo* info in observers) {
-        if (info.observer == observer && [info.key isEqual:key]) {
-            infoToRemove = info;
-            break;
-        }
-    }
-    
-    [observers removeObject:infoToRemove];
-}
-
 
 - (Class)makeKvoClassWithOriginalClassName:(NSString *)originalClazzName
 {
@@ -225,6 +188,13 @@ static Class kvo_class(id self, SEL _cmd)
     Method clazzMethod = class_getInstanceMethod(originalClazz, @selector(class));
     const char *types = method_getTypeEncoding(clazzMethod);
     class_addMethod(kvoClazz, @selector(class), (IMP)kvo_class, types);
+    
+    
+    // 添加 dealloc
+    SEL deallocSel = NSSelectorFromString(@"dealloc");
+    Method deallocMethod = class_getInstanceMethod(originalClazz, deallocSel);
+    const char * deallocTypes = method_getTypeEncoding(deallocMethod);
+    class_addMethod(kvoClazz, deallocSel, (IMP)yourDealloc, deallocTypes);
     
     objc_registerClassPair(kvoClazz);
     

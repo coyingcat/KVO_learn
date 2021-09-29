@@ -16,6 +16,6 @@ typedef void(^PGObservingBlock)(id observedObject, NSString *observedKey, id old
                 forKey:(NSString *)key
              withBlock:(PGObservingBlock)block;
 
-- (void)PG_removeObserver:(NSObject *)observer forKey:(NSString *)key;
+
 
 @end
