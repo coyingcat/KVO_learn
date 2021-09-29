@@ -13,7 +13,6 @@
 
 #define CLOCK_VIEW_MAX_COUNT 10
 #define CLOCK_VIEW_TIME_DELAY 3.0
-#define RANDOM_ENABLED 1
 
 @interface ViewController ()
 
@@ -50,11 +49,8 @@
   clockView.bounds = CGRectMake(0, 0, 132, 132);
 
   CGRect contentBounds = self.view.bounds;
-#if RANDOM_ENABLED
-  clockView.center = CGPointMake(arc4random_uniform(contentBounds.size.width), arc4random_uniform(contentBounds.size.height));
-#else
   clockView.center = CGPointMake(contentBounds.size.width / 2., contentBounds.size.height / 2.);
-#endif
+
 }
 
 - (void)_removeClockView
@@ -84,9 +80,6 @@
   });
   
   _timer = timer;
-#if RANDOM_ENABLED
-  dispatch_resume(timer);
-#endif
 }
 
 - (void)viewDidLoad
