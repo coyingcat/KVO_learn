@@ -21,15 +21,8 @@
 @implementation ViewController
 {
   NSMutableArray *_clockViews;
-  dispatch_source_t _timer;
 }
 
-- (void)dealloc
-{
-  if (NULL != _timer) {
-    dispatch_source_cancel(_timer);
-  }
-}
 
 - (BOOL)prefersStatusBarHidden
 {
@@ -53,6 +46,8 @@
 
 }
 
+
+
 - (void)_removeClockView
 {
   if (0 == _clockViews.count) {
@@ -63,35 +58,14 @@
   [_clockViews removeObjectAtIndex:0];
 }
 
-- (void)_removeAddClockView
-{
-  [self _removeClockView];
-  [self _addClockView];
-}
-
-- (void)_scheduleTimer
-{
-  dispatch_source_t timer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, dispatch_get_main_queue());
-  dispatch_source_set_timer(timer, dispatch_time(DISPATCH_TIME_NOW, CLOCK_VIEW_TIME_DELAY * NSEC_PER_SEC), CLOCK_VIEW_TIME_DELAY * NSEC_PER_SEC, 1.0);
-  
-  __weak id weakSelf = self;
-  dispatch_source_set_event_handler(timer, ^{
-    [weakSelf _removeAddClockView];
-  });
-  
-  _timer = timer;
-}
 
 - (void)viewDidLoad
 {
   [super viewDidLoad];
   self.view.backgroundColor = [UIColor colorWithWhite:0.9 alpha:1.0];
 
-  while (_clockViews.count < CLOCK_VIEW_MAX_COUNT) {
     [self _addClockView];
-  }
-
-  [self _scheduleTimer];
+  
 }
 
 @end
