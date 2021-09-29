@@ -11,12 +11,6 @@
 #import "Clock.h"
 #import "ClockView.h"
 
-#define CLOCK_VIEW_MAX_COUNT 10
-#define CLOCK_VIEW_TIME_DELAY 3.0
-
-@interface ViewController ()
-
-@end
 
 @implementation ViewController
 {
@@ -29,20 +23,24 @@
   return YES;
 }
 
-- (void)_addClockView
+- (void)_addClockView: (BOOL) isLhs
 {
   if (!_clockViews) {
     _clockViews = [NSMutableArray array];
   }
   
   ClockView *clockView = [[ClockView alloc] initWithClock:[Clock clock] style:arc4random_uniform(kClockViewStyleDark+1)];
-  [_clockViews addObject:clockView];
-  [self.view addSubview:clockView];
+  [_clockViews addObject: clockView];
+  [self.view addSubview: clockView];
 
   clockView.bounds = CGRectMake(0, 0, 132, 132);
 
   CGRect contentBounds = self.view.bounds;
-  clockView.center = CGPointMake(contentBounds.size.width / 2., contentBounds.size.height / 2.);
+  CGFloat offset = 150;
+  if (isLhs){
+      offset *= -1;
+  }
+  clockView.center = CGPointMake(contentBounds.size.width / 2. + offset, contentBounds.size.height / 2.);
 
 }
 
@@ -64,7 +62,8 @@
   [super viewDidLoad];
   self.view.backgroundColor = [UIColor colorWithWhite:0.9 alpha:1.0];
 
-    [self _addClockView];
+    [self _addClockView: YES];
+    [self _addClockView: NO];
   
 }
 
