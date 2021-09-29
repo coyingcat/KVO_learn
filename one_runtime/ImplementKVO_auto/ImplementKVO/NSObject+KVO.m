@@ -137,9 +137,7 @@ static void kvo_setter(id self, SEL _cmd, id newValue)
     NSMutableArray *observers = objc_getAssociatedObject(self, (__bridge const void *)(kPGKVOAssociatedObservers));
     for (PGObservationInfo *each in observers) {
         if ([each.key isEqualToString:getterName]) {
-            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-                each.block(self, getterName, oldValue, newValue);
-            });
+            each.block(self, getterName, oldValue, newValue);
         }
     }
 }
