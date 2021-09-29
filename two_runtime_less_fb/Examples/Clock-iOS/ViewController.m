@@ -94,13 +94,13 @@
     _KVOController = [FBKVOController controllerWithObserver:self];
     
     // handle clock change, including initial value
-    [_KVOController observe:[Clock clock] keyPath:@"date" options:NSKeyValueObservingOptionInitial|NSKeyValueObservingOptionNew block:^(id  _Nullable observer, id  _Nonnull object, NSDictionary<NSKeyValueChangeKey,id> * _Nonnull change) {
+    [_KVOController observe:[Clock clock] keyPath:@"date" options:NSKeyValueObservingOptionInitial|NSKeyValueObservingOptionNew block:^(ViewController *  _Nullable observer, id  _Nonnull object, NSDictionary<NSKeyValueChangeKey,id> * _Nonnull change) {
         
         // update observer with new value
         NSDate * date = change[NSKeyValueChangeNewKey];
         NSDateFormatter *formatter = [NSDateFormatter new];
         formatter.dateFormat = @"yyyy-MM-dd HH:mm:ss zzz";
-        self->_label.text = [formatter stringFromDate: date];
+        observer->_label.text = [formatter stringFromDate: date];
     }];
     
     
