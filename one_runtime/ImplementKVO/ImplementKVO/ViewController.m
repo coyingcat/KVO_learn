@@ -26,6 +26,10 @@
 @property (nonatomic, weak) IBOutlet UITextField *textfield;
 @property (nonatomic, weak) IBOutlet UIButton *button;
 
+@property (weak, nonatomic) IBOutlet UILabel *label;
+
+
+
 @property (nonatomic, strong) Message *message;
 
 @end
@@ -42,7 +46,9 @@
                        withBlock:^(id observedObject, NSString *observedKey, id oldValue, id newValue) {
                            NSLog(@"%@.%@ is now: %@", observedObject, observedKey, newValue);
                            dispatch_async(dispatch_get_main_queue(), ^{
-                               self.textfield.text = newValue;
+                               NSString * content = (NSString *) newValue;
+                               self.textfield.text = content;
+                               self.label.text = [content uppercaseString];
                            });
 
     }];
@@ -53,7 +59,7 @@
 
 - (IBAction)changeMessage:(id)sender
 {
-    NSArray *msgs = @[@"Hello World!", @"Objective C", @"Swift", @"Peng Gu", @"peng.gu@me.com", @"www.gupeng.me", @"glowing.com"];
+    NSArray *msgs = @[@"Hello", @"World", @"Objective - C", @"Swift", @"666"];
     NSUInteger index = arc4random_uniform((u_int32_t)msgs.count);
     self.message.text = msgs[index];
 }
