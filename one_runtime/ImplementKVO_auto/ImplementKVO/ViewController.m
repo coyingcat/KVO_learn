@@ -44,12 +44,14 @@
     [super viewDidLoad];
     [self changeMessage:nil];
     self.message = [[Message alloc] init];
+    __weak typeof(self) blockSelf = self;
     [self.message PG_addObserver:self forKey:NSStringFromSelector(@selector(text))
                        withBlock:^(id observedObject, NSString *observedKey, id oldValue, id newValue) {
+                            __strong typeof(blockSelf) normalSelf = blockSelf;
                            NSLog(@"%@.%@ is now: %@", observedObject, observedKey, newValue);
                             NSString * content = (NSString *) newValue;
-                            self.textfield.text = content;
-                            self.label.text = [content uppercaseString];
+                            normalSelf.textfield.text = content;
+                            normalSelf.label.text = [content uppercaseString];
 
     }];
     
